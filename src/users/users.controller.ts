@@ -5,6 +5,12 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
     constructor(readonly usersService:UsersService){}
+    //테스트
+    @Get('/test')
+    test(){
+        return this.usersService.Test();
+    }
+    
     //전체 조회
     @Get()
     getAll(){

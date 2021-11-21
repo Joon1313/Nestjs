@@ -2,25 +2,22 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm'
 import { User } from './entities/user.entity';
-import { MoviesController } from './movies/movies.controller';
-import { MoviesService } from './movies/movies.service';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
   imports: [TypeOrmModule.forRoot({
-    "type": "mysql",
+    "type": "postgres",
     "host": "localhost",
-    "port": 3306,
-    "username": "root",
+    "port": 5432,
+    "username": "postgres",
     "password": "1313",
-    "database": "nestjs",
+    "database": "Nestjs",
     "entities": [User],
     "synchronize": true
-  }), UsersModule],
-  controllers: [MoviesController],
-  providers: [MoviesService],
+  }), UsersModule, AuthModule],
 })
 export class AppModule {
   constructor(private connection: Connection) {}
