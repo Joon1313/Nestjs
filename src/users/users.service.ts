@@ -1,11 +1,12 @@
 // eslint-disable-next-line prettier/prettier
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { SignInUserDto } from './dto/signIn-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +14,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
-
+  // 회원가입
   async create(createUserDto: CreateUserDto): Promise<void> {
     const { name, user_id, password, age } = createUserDto;
     const salt = await bcrypt.genSalt();
@@ -35,8 +36,19 @@ export class UsersService {
       }
     }
   }
-
-  async findOne(id: number): Promise<string>{
+  //로그인
+  async signIn(signInUserDto: SignInUserDto): Promise<string> {
+    const { user_id, password } = signInUserDto;
+    const user = await this.usersRepository.findOne({
+      user_id: user_id,
+    });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      return 'login success';
+    } else {
+      throw new UnauthorizedException('login failed');
+    }
+  }
+  async findOne(id: number): Promise<string> {
     const result = await this.usersRepository.findOne(id);
     if (!result) {
       throw new NotFoundException(`can't find user with id ${id}`);
@@ -44,12 +56,9 @@ export class UsersService {
       return `finded user name ${result.name}`;
     }
   }
-
+  //유저 업데이트
   async update(id: number, updateUserDto: UpdateUserDto): Promise<string> {
-    const user = await this.usersRepository.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`can't find user with id ${id}`);
-    }
+    const user = await this.userFindOne(id);
     const { name, user_id, password, age } = updateUserDto;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -63,12 +72,19 @@ export class UsersService {
     await this.usersRepository.save(updateUser);
     return `This action updates a #${id} user`;
   }
-
+  //유저 삭제
   async delete(id: number): Promise<string> {
     const res = await this.usersRepository.delete(id);
     if (res.affected === 0) {
       throw new NotFoundException(`can't find user with id ${id}`);
     }
     return `Deletion successful with user ID ${id}`;
+  }
+  private async userFindOne(id: number): Promise<User> {
+    const result = await this.usersRepository.findOne(id);
+    if (!result) {
+      throw new NotFoundException(`can't find user with id ${id}`);
+    }
+    return result;
   }
 }
