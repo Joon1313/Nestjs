@@ -8,11 +8,16 @@ import {
   Delete,
   ValidationPipe,
   ParseIntPipe,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SignInUserDto } from './dto/signIn-user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from './get-user.decorator';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -24,7 +29,7 @@ export class UsersController {
   }
   //로그인
   @Post('signin')
-  signIn(@Body(ValidationPipe) signInUserDto: SignInUserDto) {
+  signIn(@Body(ValidationPipe) signInUserDto: SignInUserDto): Promise<{ token:string }> {
     return this.usersService.signIn(signInUserDto);
   }
   // 유저 찾기
@@ -42,5 +47,11 @@ export class UsersController {
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.usersService.delete(id);
+  }
+
+  @Post('/test')
+  @UseGuards(AuthGuard())
+  test(@GetUser() user: User) {
+    console.log('user', user);
   }
 }

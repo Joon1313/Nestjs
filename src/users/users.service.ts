@@ -7,12 +7,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { SignInUserDto } from './dto/signIn-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
   // 회원가입
   async create(createUserDto: CreateUserDto): Promise<void> {
@@ -37,14 +39,19 @@ export class UsersService {
     }
   }
   //로그인
-  async signIn(signInUserDto: SignInUserDto): Promise<string> {
+  async signIn(signInUserDto: SignInUserDto): Promise<{ token: string }> {
     const { user_id, password } = signInUserDto;
     const user = await this.usersRepository.findOne({
       user_id: user_id,
     });
+    // 로그인 성공 로직
     if (user && (await bcrypt.compare(password, user.password))) {
-      return 'login success';
-    } else {
+      const payload = { user_id };
+      const token = await this.jwtService.sign(payload);
+      return { token };
+    }
+    //로그인 실패 로직 
+    else {
       throw new UnauthorizedException('login failed');
     }
   }
