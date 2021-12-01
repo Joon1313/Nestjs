@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Req,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -38,10 +39,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
   // 유저 업데이트
-  @Patch(':id')
+  @Patch()
+  @UseGuards(AuthGuard())
   // eslint-disable-next-line prettier/prettier
-  update(@Param('id', ParseIntPipe) id: number, @Body(ValidationPipe) updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(@GetUser() user:User, @Body(ValidationPipe) updateUserDto: UpdateUserDto) {
+    return this.usersService.update(user, updateUserDto);
   }
   // 유저 삭제
   @Delete(':id')
@@ -51,7 +53,7 @@ export class UsersController {
 
   @Post('/test')
   @UseGuards(AuthGuard())
-  test(@GetUser() user: User) {
+  test(@GetUser() user: User, @Req() req) {
     console.log('user', user);
   }
 }

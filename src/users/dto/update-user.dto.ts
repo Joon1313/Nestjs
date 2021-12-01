@@ -10,13 +10,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(6)
-  @MaxLength(20)
-  user_id: string;
-
+export class UpdateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(1)

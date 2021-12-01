@@ -64,20 +64,18 @@ export class UsersService {
     }
   }
   //유저 업데이트
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<string> {
-    const user = await this.userFindOne(id);
-    const { name, user_id, password, age } = updateUserDto;
+  async update(user: User, updateUserDto: UpdateUserDto): Promise<string> {
+    const { name, password, age } = updateUserDto;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const updateUser = {
       ...user,
       name,
-      user_id,
       password: hashedPassword,
       age,
     };
     await this.usersRepository.save(updateUser);
-    return `This action updates a #${id} user`;
+    return `This action updates a ${name} user`;
   }
   //유저 삭제
   async delete(id: number): Promise<string> {
