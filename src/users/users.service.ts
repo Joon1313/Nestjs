@@ -55,6 +55,12 @@ export class UsersService {
       throw new UnauthorizedException('login failed');
     }
   }
+
+  async signOut(user: User) {
+    const { user_id } = user;
+    await this.jwtService.
+  }
+
   async findOne(id: number): Promise<string> {
     const result = await this.usersRepository.findOne(id);
     if (!result) {

@@ -24,7 +24,7 @@ export class BoardController {
     return this.boardService.findAll();
   }
 
-  @Get('/user')
+  @Get('/me')
   findUserBoard(@GetUser() user: User) {
     return this.boardService.findUserBoard(user);
   }

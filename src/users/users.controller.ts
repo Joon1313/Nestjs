@@ -28,12 +28,18 @@ export class UsersController {
   create(@Body(ValidationPipe) createUserDto: CreateUserDto): Promise<void> {
     return this.usersService.create(createUserDto);
   }
-  //로그인
+  // 로그인
   @Post('signin')
   signIn(
     @Body(ValidationPipe) signInUserDto: SignInUserDto,
   ): Promise<{ token: string }> {
     return this.usersService.signIn(signInUserDto);
+  }
+  // 로그아웃
+  @Post('signOut')
+  @UseGuards(AuthGuard())
+  signOut(@GetUser() user: User, @Req req) {
+    return this.usersService.signOut(user);
   }
   // 유저 찾기
   @Get(':id')
