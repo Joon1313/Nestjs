@@ -30,7 +30,9 @@ export class UsersController {
   }
   //로그인
   @Post('signin')
-  signIn(@Body(ValidationPipe) signInUserDto: SignInUserDto): Promise<{ token:string }> {
+  signIn(
+    @Body(ValidationPipe) signInUserDto: SignInUserDto,
+  ): Promise<{ token: string }> {
     return this.usersService.signIn(signInUserDto);
   }
   // 유저 찾기

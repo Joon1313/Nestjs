@@ -1,34 +1,30 @@
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { JwtStrategy } from './jwt.strategy';
 import { UsersService } from './users.service';
 
-class MockRepository {
-  async findOne(id) {
-    const user: User = new User();
-    user.id = id;
-    return user;
-  }
-}
+const mockUserService = () => ({
+  findOne: jest.fn(),
+});
 
 describe('UsersService', () => {
   let service: UsersService;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
-      // {
-      //   provide: getRepositoryToken(User),
-      //   useClass: MockRepository,
-      // },
+      providers: [
+        UsersService,
+        { provide: getRepositoryToken(User), useValue: mockUserService() },
+      ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
   });
-
-  it('findOne user', () => {
-    const id = 20;
-    const res = service.findOne(id);
-    expect(res).toEqual('finded user name joon');
+  describe('findOne', () => {
+    it('find user id', () => {
+      mockUserService.findOne.mockResolvedValue({ id: 20 });
+    });
   });
 });
