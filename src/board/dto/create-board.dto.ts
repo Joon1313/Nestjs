@@ -8,8 +8,4 @@ export class CreateBoardDto {
   @IsNotEmpty()
   @IsString()
   content: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
 }

@@ -50,7 +50,7 @@ export class UsersService {
       const token = await this.jwtService.sign(payload);
       return { token };
     }
-    //로그인 실패 로직 
+    //로그인 실패 로직
     else {
       throw new UnauthorizedException('login failed');
     }
@@ -58,15 +58,16 @@ export class UsersService {
 
   async signOut(user: User) {
     const { user_id } = user;
-    await this.jwtService.
   }
 
-  async findOne(id: number): Promise<string> {
-    const result = await this.usersRepository.findOne(id);
-    if (!result) {
+  async findOne(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne(id, {
+      select: ['id', 'user_id', 'name', 'age'],
+    });
+    if (!user) {
       throw new NotFoundException(`can't find user with id ${id}`);
     } else {
-      return `finded user name ${result.name}`;
+      return user;
     }
   }
   //유저 업데이트
@@ -91,11 +92,11 @@ export class UsersService {
     }
     return `Deletion successful with user ID ${id}`;
   }
-  private async userFindOne(id: number): Promise<User> {
-    const result = await this.usersRepository.findOne(id);
-    if (!result) {
-      throw new NotFoundException(`can't find user with id ${id}`);
-    }
-    return result;
-  }
+  // private async userFindOne(id: number): Promise<User> {
+  //   const result = await this.usersRepository.findOne(id);
+  //   if (!result) {
+  //     throw new NotFoundException(`can't find user with id ${id}`);
+  //   }
+  //   return result;
+  // }
 }

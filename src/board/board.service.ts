@@ -15,8 +15,7 @@ export class BoardService {
   ) {}
   async create(createBoardDto: CreateBoardDto, user: User) {
     const { title, content } = createBoardDto;
-    const user_id = user.id;
-    const newBoard = this.boardRepository.create({ title, content, user_id });
+    const newBoard = this.boardRepository.create({ title, content, user });
     await this.boardRepository.save(newBoard);
     return newBoard;
   }
@@ -38,7 +37,7 @@ export class BoardService {
   }
 
   async findUserBoard(user: User) {
-    const userBoard = await this.boardRepository.find({ user_id: user.id });
+    const userBoard = await this.boardRepository.find({ user: user });
     if (!userBoard) {
       throw new NotFoundException(`can't not find user board`);
     }

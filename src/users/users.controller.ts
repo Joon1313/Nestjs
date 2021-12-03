@@ -19,6 +19,7 @@ import { SignInUserDto } from './dto/signIn-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
 import { User } from './entities/user.entity';
+import { Board } from 'src/board/entities/board.entity';
 
 @Controller('users')
 export class UsersController {
@@ -38,12 +39,12 @@ export class UsersController {
   // 로그아웃
   @Post('signOut')
   @UseGuards(AuthGuard())
-  signOut(@GetUser() user: User, @Req req) {
+  signOut(@GetUser() user: User, @Req() req) {
     return this.usersService.signOut(user);
   }
   // 유저 찾기
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<string> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);
   }
   // 유저 업데이트

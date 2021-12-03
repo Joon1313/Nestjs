@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Board } from 'src/board/entities/board.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity()
 @Unique(['user_id'])
@@ -17,4 +18,7 @@ export class User {
 
   @Column()
   age: number;
+
+  @OneToMany(type => Board, (board) => board.user, { eager: false })
+  boards: Board[];
 }
