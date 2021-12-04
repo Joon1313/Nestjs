@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { User } from '../users/entities/user.entity';
 import { BoardService } from './board.service';
+
+jest.mock('./board.service');
 
 describe('BoardService', () => {
   let service: BoardService;
@@ -10,9 +13,13 @@ describe('BoardService', () => {
     }).compile();
 
     service = module.get<BoardService>(BoardService);
+    jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  test('findOne Board', async () => {
+    const user = await service.findOne(1);
+    console.log('user', user);
+    expect(user).toEqual(2);
   });
+
 });
